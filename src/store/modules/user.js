@@ -1,13 +1,15 @@
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login } from '@/api/user'
+import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
 
 // state 定义状态
 // 初始化的时候从缓存中读取状态 并赋值到初始化的状态上
 // Vuex的持久化 如何实现 ？ Vuex和前端缓存相结合
 const state = {
   // 设置 token 初始状态
-  token: getToken() // 初始化vuex时，先从缓存中读取
+  token: getToken(), // 初始化vuex时，先从缓存中读取
+  userInfo: {} // 定义一个空对象
 }
+
 // mutations 修改状态 （vuex 和 缓存 一起公用）
 const mutations = {
   // 设置token
@@ -20,15 +22,30 @@ const mutations = {
   removeToken(state) {
     state.token = null // 将 vuex 的数据置空
     removeToken() // vuex 数据置空 -->  同步到缓存(置空)
+  },
+  updateUserInfo(state, result) {
+    // 更新一个对象
+    // state.userInfo['username'] = result --> 不是响应式
+
+    // state.userInfo = { ...result } // 也是响应式(这样写属于浅拷贝)
+    state.userInfo = result // 是响应式
+  },
+  // 删除用户信息
+  removeUserInfo(state) {
+    state.userInfo = {}
   }
 }
 
 // actions 执行异步状态
 const actions = {
   // 登录 -> 定义login action 也需要参数 调用action时 传递过来的参数
-  async login({ commit }, data) { // 解构 - context
+  async login({ commit }, data) {
+    // 解构 - context
     const token = await login(data) // 拿到token
     commit('updateToken', token)
+
+    // 写入时间戳
+    setTimeStamp() // 将当前的最新时间写入缓存
 
     // axios 默认加了一层 data
     // if (token.data.success) {
@@ -36,6 +53,21 @@ const actions = {
     // // actions 修改state 必须通过mutations
     //   commit('updateToken', token.data.data)
     // }
+  },
+  // 获取用户信息资料
+  async getUserInfo({ commit }) { // 解构
+    const result = await getUserInfo()
+
+    const baseInfo = await getUserDetailById(result.userId)
+    commit('updateUserInfo', { ...result, ...baseInfo }) // 提交到 mutations
+    // commit('updateUserInfo', result) // 提交到 mutations
+    return result // 这里是给我们后期做权限时，留下的
+  },
+  logout({ commit }) {
+    // 删除 token
+    commit('removeToken') // 不仅仅删除了vuex中的 还删除了缓存中的
+    // 删除用户资料
+    commit('removeUserInfo') // 删除用户信息
   }
 }
 
