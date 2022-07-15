@@ -115,3 +115,30 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+/** *
+ *
+ *  自定义一个属性：children，进行关联上下两级的数据
+ *  将列表型的数据转化成树形数据 => 递归算法（forEach 两级循环，reduce 循环，递归） => 自身调用自身 => 一定条件不能一样， 否则就会死循环
+ *  遍历树形 有一个重点 要先找一个头儿
+ *  注：递归的调用不要爆栈
+ * ***/
+export function tranListToTreeData(list, rootValue) {
+  // debugger
+  var arr = []
+  list.forEach(item => { // item -> 每个对象
+    if (item.pid === rootValue) {
+      // 找到之后，就要取找 item 下有没有子节点
+      // 下面再找到子节点时，要把自己的 id 作为别人的 pid
+      const children = tranListToTreeData(list, item.id)
+      if (children.length) {
+        // 找到的情况下
+        // 如果children的长度 > 0 说明找到了子节点 children -> [{}, {}, {}]
+        item.children = children
+      }
+      arr.push(item) // 将内容 push 到数组中
+    }
+  })
+  return arr
+}
+
