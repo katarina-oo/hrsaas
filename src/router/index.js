@@ -10,6 +10,7 @@ import attendancesRouter from './modules/attendances'
 import salarysRouter from './modules/salarys'
 import settingRouter from './modules/setting'
 import socialRouter from './modules/social'
+import userRouter from './modules/user'
 
 // 定义一个动态路由变量
 export const asyncRoutes = [
@@ -60,7 +61,8 @@ export const constantRoutes = [
       path: '', // 空，默认的二级路由
       component: () => import('@/views/import')
     }]
-  }
+  },
+  userRouter // 放置一个都可用访问的路由
 
   // 404 page must be placed at the end !!!
   // { path: '*', redirect: '/404', hidden: true }
