@@ -14,5 +14,12 @@ export const imageerror = {
       // 当图片出现异常时，会将指令配置的默认图片设置为该图片的内容
       dom.src = options.value
     }
+  },
+  // 该函数同 inserted 一样也是钩子函数
+  componentUpdated(dom, options) {
+    // 该钩子会在当前指令作用组件 更新数据完毕之后 执行
+    // inserted 只会执行一次
+    // 组件初始化 一旦更新就会再进入 inserted中 -> componentUpdated
+    dom.src = dom.src || options.value
   }
 }

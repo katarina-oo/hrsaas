@@ -22,6 +22,18 @@ Object.keys(directives).forEach(key => {
   Vue.directive(key, directives[key]) // 注册自定义指令
 })
 
+import Components from '@/components/index'
+// 注册自定义组件
+Vue.use(Components)
+
+// filters -> 就是一个对象的集合， key -> 是方法名， value -> 是函数
+import * as filters from '@/filters/index'
+// 注册过滤器
+Object.keys(filters).forEach(key => {
+  // 过滤器的名字就是 ——> key，值就是 ——> filters[key] filters 是对象 key 是键值
+  Vue.filter(key, filters[key]) // 注册自定义的过滤器
+})
+
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
