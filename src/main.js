@@ -34,6 +34,10 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key]) // 注册自定义的过滤器
 })
 
+import CheckPermission from '@/mixin/checkPermission'
+// 全局混入检查对象
+Vue.mixin(CheckPermission) // 所有的组件都拥有了检查的方法
+
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

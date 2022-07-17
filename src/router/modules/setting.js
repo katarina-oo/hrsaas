@@ -3,7 +3,7 @@ import Layout from '@/layout'
 // 导出公司设置的路由规则
 export default {
   path: '/setting', // 路由地址   /setting
-  name: 'setting', // 给模块的一级路由加一个name属性 做权限用到到
+  name: 'settings', // 给模块的一级路由加一个name属性 做权限用到到
   component: Layout, // 组件
   // 配置二级路的路由表
   children: [{

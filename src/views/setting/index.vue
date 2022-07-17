@@ -27,7 +27,7 @@
 
                 <!-- 使用作用域插槽 -->
                 <template slot-scope="{ row }">
-                  <el-button size="small" type="success" round>分配权限</el-button>
+                  <el-button size="small" type="success" round @click="assignPerm(row.id)">分配权限</el-button>
                   <!-- 新增按钮 -->
                   <el-button size="small" type="primary" icon="el-icon-plus" circle @click="showDialog = true" />
                   <!-- 编辑按钮 -->
@@ -95,17 +95,29 @@
     <!-- <RoleDialog ref="roleRef" v-model="showDialog" @updatelist="getRoleList" /> -->
     <RoleDialog ref="roleRef" :show-dialog.sync="showDialog" @updatelist="getRoleList" />
 
+    <!-- 抽离 - 分配权限弹框 -->
+    <PowerDialog
+      :show-perm-dialog.sync="showPermDialog"
+      :role-id.sync="roleId"
+      :perm-data="permData"
+      :select-check.sync="selectCheck"
+    />
   </div>
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, deleteRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail } from '@/api/setting'
 import { mapGetters } from 'vuex'
 import RoleDialog from './components/role-dialog.vue'
+import { getPermissionList } from '@/api/permisson'
+import { tranListToTreeData } from '@/utils' // 封装的方法 -> 把列表转化成树形数据的
+import PowerDialog from './components/power-dialog.vue'
+
 export default {
   name: 'Setting',
   components: {
-    RoleDialog
+    RoleDialog,
+    PowerDialog
   },
   data() {
     return {
@@ -118,7 +130,11 @@ export default {
         total: 0 // 记录总数
       },
       formData: {}, // 存放公司信息
-      showDialog: false // 控制弹层是否显示（默认关闭）
+      showDialog: false, // 控制弹层是否显示（默认关闭）
+      showPermDialog: false,
+      roleId: '', // 用来记录当前分配权限的id
+      permData: [], // 专门用来接收分配权限数据 树形数据
+      selectCheck: [] // 用来记录当前的权限点的标识
     }
   },
   computed: {
@@ -169,6 +185,16 @@ export default {
       await this.$refs.roleRef.loadDeatil(id)
       // 打开弹框（短暂的白屏的问题了）
       this.showDialog = true // 显示弹层
+    },
+    async assignPerm(id) {
+      // 点击分配权限
+      // const permList = await getPermissionList()
+      // this.permData = await tranListToTreeData(permList, '0') // 转化list到树形数据
+      this.permData = tranListToTreeData(await getPermissionList(), '0') // 转化 list 到树形数据
+      this.roleId = id
+      const { permIds } = await getRoleDetail(id) // permIds是当前角色所拥有的权限点数据
+      this.selectCheck = permIds // 将当前角色所拥有的权限id赋值
+      this.showPermDialog = true
     }
   }
 }

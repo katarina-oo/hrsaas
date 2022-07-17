@@ -70,7 +70,9 @@ const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }), // 滚动行为
   // 临时合并所有的路由
-  routes: [...constantRoutes, ...asyncRoutes, { path: '*', redirect: '/404', hidden: true }]
+  // routes: [...constantRoutes, ...asyncRoutes, { path: '*', redirect: '/404', hidden: true }]
+  // routes: [...constantRoutes, { path: '*', redirect: '/404', hidden: true }]
+  routes: [...constantRoutes]
 })
 
 const router = createRouter() // 实例化一个路由
@@ -78,7 +80,7 @@ const router = createRouter() // 实例化一个路由
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  router.matcher = newRouter.matcher // 重置路由
 }
 
 export default router
