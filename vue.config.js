@@ -15,6 +15,34 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
+let cdn = { css: [], js: [] }
+const isProd = process.env.NODE_ENV === 'production' // 判断是否是生产环境
+let externals = {}
+if (isProd) {
+  // 如果是生产环境 才做排除和cdn的注入
+  externals = {
+    // key 是要排除的包名
+    // value 实际上是实际引入的包的全局的变量名
+    'vue': 'Vue',
+    'element-ui': 'ELEMENT',
+    'xlsx': 'XLSX'
+  }
+  cdn = {
+    css: [
+      // element-ui css
+      'https://unpkg.com/element-ui/lib/theme-chalk/index.css' // 样式表
+    ],
+    js: [
+      // vue must at first!
+      'https://unpkg.com/vue@2.6.10/dist/vue.js', // vuejs
+      // element-ui js
+      'https://unpkg.com/element-ui/lib/index.js', // elementUI
+      'https://cdn.jsdelivr.net/npm/xlsx@0.16.6/dist/jszip.min.js',
+      'https://cdn.jsdelivr.net/npm/xlsx@0.16.6/dist/xlsx.full.min.js'
+    ]
+  }
+}
+
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -62,7 +90,11 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    }
+    },
+    // 要排除的包名(elementUI xlsx  和 vue)
+    // 因为要排除 element-ui 因此后面要引入 CDN文件，CDN文件中有ELEMENTUI的全局变量名
+    // externals 首先会排除掉 所定义的包名，空出来的位置 会用变量来替换
+    externals: externals
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
@@ -75,6 +107,13 @@ module.exports = {
         include: 'initial'
       }
     ])
+
+    // 注入cdn变量
+    // 这行代码会在执行打包的时候执行，就会将cdn变量注入到 html模块中
+    config.plugin('html').tap(args => {
+      args[0].cdn = cdn // 后面的 cdn变量就是上方所定义的变量
+      return args
+    })
 
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')

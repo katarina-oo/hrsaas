@@ -70,7 +70,7 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }), // 滚动行为
   // 临时合并所有的路由
   // routes: [...constantRoutes, ...asyncRoutes, { path: '*', redirect: '/404', hidden: true }]
