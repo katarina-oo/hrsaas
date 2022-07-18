@@ -41,7 +41,12 @@ Vue.mixin(CheckPermission) // 所有的组件都拥有了检查的方法
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
+import i18n from '@/Lang'
+Vue.use(ElementUI, {
+  // 会根据当前的 locale 属性去寻找对应的显示内容
+  i18n: (key, value) => i18n.t(key, value) // t方法 会去对应的语言包里寻找对应的内容
+})
 
 Vue.config.productionTip = false
 
@@ -49,5 +54,6 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })

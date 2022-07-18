@@ -1,6 +1,10 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <!-- 显示用的组件 -->
     <!-- <breadcrumb class="breadcrumb-container" /> -->
@@ -10,23 +14,35 @@
     </div>
 
     <div class="right-menu">
+
+      <!-- 放置切换多语言 -->
+      <lang-select class="right-menu-item" />
+
+      <!-- 放置全屏插件 -->
+      <screen-full class="right-menu-item" />
+
+      <!-- 放置设置动态切换主题的组件 -->
+      <theme-picker class="right-menu-item" />
+
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img v-imageerror="defaultImg" :src="staffPhoto" class="user-avatar">
+          <img
+            v-imageerror="defaultImg"
+            :src="staffPhoto"
+            class="user-avatar"
+          >
           <span class="name">{{ name }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              首页
-            </el-dropdown-item>
+            <el-dropdown-item> 首页 </el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://github.com/katarina-oo/hrsaas">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">退出登录</span>
+            <span style="display: block">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -48,12 +64,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar',
-      'name',
-      'staffPhoto'
-    ])
+    ...mapGetters(['sidebar', 'avatar', 'name', 'staffPhoto'])
   },
   methods: {
     toggleSideBar() {
@@ -93,26 +104,26 @@ export default {
   position: relative;
   // background: #fff;
   background-image: -webkit-linear-gradient(left, #3d6df8, #5b8cff);
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
   .name {
-          color: #fff;
-          vertical-align: middle;
-          margin-left:5px;
-   }
+    color: #fff;
+    vertical-align: middle;
+    margin-left: 5px;
+  }
 
   .breadcrumb-container {
     float: left;
@@ -133,14 +144,14 @@ export default {
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }
@@ -166,12 +177,12 @@ export default {
           right: -20px;
           top: 18px;
           font-size: 12px;
-          color: #FFF;
+          color: #fff;
         }
       }
       .user-dropdown {
-           color: #fff;
-    }
+        color: #fff;
+      }
     }
   }
 }
